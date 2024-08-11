@@ -1,7 +1,6 @@
 package com.example.tdddemo;
 
 import org.junit.jupiter.api.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @DisplayName("계산기 테스트")
 class CalculatorTest {
