@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 public class Calculator {
 
     public int add(int a, int b) {
-        return 0; // 임시로 0을 반환
+        return a+b; // 임시로 0을 반환
     }
 
     public int subtract(int a, int b) {

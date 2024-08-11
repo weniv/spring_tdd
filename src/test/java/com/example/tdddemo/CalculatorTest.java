@@ -32,4 +32,11 @@ class CalculatorTest {
     void testAddZero() {
         assertEquals(3, calculator.add(3, 0), "3 + 0 should equal 3");
     }
+
+    @Test
+    void testAddWithOverflow() {
+        assertEquals(Integer.MIN_VALUE, calculator.add(Integer.MAX_VALUE, 1),
+            "Adding 1 to MAX_VALUE should result in MIN_VALUE due to overflow");
+    }
+
 }
