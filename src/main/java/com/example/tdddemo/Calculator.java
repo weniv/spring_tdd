@@ -6,8 +6,26 @@ import lombok.NoArgsConstructor;
 public class Calculator {
 
     public int add(int a, int b) {
-        return a+b; // 임시로 0을 반환
+        if (willAdditionOverflow(a, b)) {
+            if (a > 0) {
+                return Integer.MIN_VALUE;
+            } else {
+                return Integer.MAX_VALUE;
+            }
+        }
+        return a + b;
     }
+
+    private boolean willAdditionOverflow(int a, int b) {
+        if (b > 0 && a > Integer.MAX_VALUE - b) {
+            return true;
+        }
+        if (b < 0 && a < Integer.MIN_VALUE - b) {
+            return true;
+        }
+        return false;
+    }
+
 
     public int subtract(int a, int b) {
         return a - b;
