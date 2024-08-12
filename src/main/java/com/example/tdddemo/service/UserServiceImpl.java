@@ -3,11 +3,14 @@ package com.example.tdddemo.service;
 import com.example.tdddemo.entity.User;
 import com.example.tdddemo.repository.UserRepository;
 import java.util.List;
+import java.util.NoSuchElementException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
@@ -37,8 +40,12 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User getUserByEmail(String email) {
-    return userRepository.findByEmail(email);
+  public User getUserByEmail(String email) throws NoSuchElementException {
+    User user = userRepository.findByEmail(email);
+    if (user == null) {
+      throw new NoSuchElementException("User not found");
+    }
+    return user;
   }
 
   @Override
@@ -66,21 +73,24 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User updateUser(String email, String currentPassword, String newName) {
-    User user = userRepository.findByEmail(email);
-    if (user != null && passwordEncoder.matches(currentPassword, user.getPassword())) {
-      user.setName(newName);
-      return userRepository.save(user);
+    User user = getUserByEmail(email);
+    if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+      throw new IllegalArgumentException("Invalid email or password");
     }
-    throw new IllegalArgumentException("Invalid email or password");
+    user.setName(newName);
+    return userRepository.save(user);
   }
 
   @Override
-  public void deleteUser(String email, String password) {
+  public void deleteUser(String email, String password)
+      throws NoSuchElementException, IllegalArgumentException {
     User user = userRepository.findByEmail(email);
-    if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-      userRepository.delete(user);
-    } else {
+    if (user == null) {
+      throw new NoSuchElementException("User not found");
+    }
+    if (!passwordEncoder.matches(password, user.getPassword())) {
       throw new IllegalArgumentException("Invalid email or password");
     }
+    userRepository.delete(user);
   }
 }
